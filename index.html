@@ -32,6 +32,30 @@
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="https://elbrote.org/wp-content/uploads/2025/08/radio-comunitaria-elbrote-3.png">
     
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- iOS PWA -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="El Brote FM">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="icon-152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
+    
+    <!-- Splash screens iOS -->
+    <link rel="apple-touch-startup-image" href="splash-640x1136.png" media="(device-width: 320px) and (device-height: 568px)">
+    <link rel="apple-touch-startup-image" href="splash-750x1334.png" media="(device-width: 375px) and (device-height: 667px)">
+    <link rel="apple-touch-startup-image" href="splash-1242x2208.png" media="(device-width: 414px) and (device-height: 736px)">
+    
+    <!-- Windows Tile -->
+    <meta name="msapplication-TileColor" content="#d32f2f">
+    <meta name="msapplication-TileImage" content="icon-144.png">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
     <title>Radio Comunitaria El Brote - 90.3 FM</title>
     
     <!-- Fonts -->
@@ -152,6 +176,9 @@
             align-items: center;
             gap: 15px;
             animation: fadeInDown 1s ease-out;
+            background: transparent;
+            padding: 10px;
+            border-radius: 15px;
         }
 
         @keyframes fadeInDown {
@@ -168,8 +195,9 @@
         .logo-image {
             height: 70px;
             width: auto;
-            filter: drop-shadow(3px 3px 8px rgba(0, 0, 0, 0.6));
+            filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5));
             transition: all 0.3s ease;
+            background: transparent !important;
         }
 
         .logo-image:hover {
@@ -941,7 +969,23 @@
             .speaker-grill {
                 margin-right: 0;
                 margin-bottom: 20px;
-                min-height: 200px;
+                min-height: 250px;
+                background: radial-gradient(circle, #fafafa 0%, #d5d5d5 100%);
+            }
+            
+            .mesh {
+                background:
+                    repeating-linear-gradient(0deg,
+                        #212121 0px,
+                        #212121 4px,
+                        transparent 4px,
+                        transparent 12px),
+                    repeating-linear-gradient(90deg,
+                        #212121 0px,
+                        #212121 4px,
+                        transparent 4px,
+                        transparent 12px);
+                opacity: 0.9;
             }
 
             .control-panel {
@@ -1012,7 +1056,406 @@
                 left: 32px;
             }
         }
+    
+        /* ============================================
+           Connection Quality Indicator
+           ============================================ */
+        .connection-indicator {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 15px 20px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transform: translateX(150px);
+        }
+
+        .connection-indicator.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .connection-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #4caf50;
+            box-shadow: 0 0 10px currentColor;
+            animation: pulse-dot 2s infinite;
+        }
+
+        .connection-dot.excellent {
+            background: #4caf50;
+            box-shadow: 0 0 15px #4caf50;
+        }
+
+        .connection-dot.good {
+            background: #8bc34a;
+            box-shadow: 0 0 15px #8bc34a;
+        }
+
+        .connection-dot.fair {
+            background: #ffc107;
+            box-shadow: 0 0 15px #ffc107;
+        }
+
+        .connection-dot.poor {
+            background: #ff9800;
+            box-shadow: 0 0 15px #ff9800;
+        }
+
+        .connection-dot.offline {
+            background: #f44336;
+            box-shadow: 0 0 15px #f44336;
+            animation: pulse-alert 1s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 0.8;
+            }
+        }
+
+        @keyframes pulse-alert {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.3);
+            }
+        }
+
+        .connection-text {
+            color: #fff;
+            font-size: 0.9rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .connection-status {
+            font-weight: bold;
+        }
+
+        .connection-stats {
+            font-size: 0.75rem;
+            opacity: 0.7;
+        }
+
+        .buffer-indicator {
+            width: 100px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .buffer-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4caf50, #8bc34a);
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        @media (max-width: 768px) {
+            .connection-indicator {
+                top: 80px;
+                right: 10px;
+                padding: 10px 15px;
+                font-size: 0.85rem;
+            }
+
+            .connection-dot {
+                width: 10px;
+                height: 10px;
+            }
+
+            .buffer-indicator {
+                width: 80px;
+            }
+        }
+    
+        /* ============================================
+           Chat en Vivo (Preparado)
+           ============================================ */
+        .chat-container {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 350px;
+            height: 500px;
+            background: var(--menu-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            transform: translateY(600px);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+        }
+
+        .chat-container.visible {
+            transform: translateY(0);
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #d32f2f, #b71c1c);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .chat-title {
+            color: #fff;
+            font-weight: bold;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chat-online {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .chat-online-dot {
+            width: 8px;
+            height: 8px;
+            background: #4caf50;
+            border-radius: 50%;
+            animation: pulse-dot 2s infinite;
+        }
+
+        .chat-close-btn {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .chat-close-btn:hover {
+            transform: rotate(90deg);
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .chat-message {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            animation: slideInMessage 0.3s ease;
+        }
+
+        @keyframes slideInMessage {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .chat-message.own {
+            align-items: flex-end;
+        }
+
+        .chat-message.other {
+            align-items: flex-start;
+        }
+
+        .chat-message-author {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            color: var(--menu-text);
+        }
+
+        .chat-message-bubble {
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 15px;
+            word-wrap: break-word;
+        }
+
+        .chat-message.own .chat-message-bubble {
+            background: #d32f2f;
+            color: #fff;
+            border-bottom-right-radius: 5px;
+        }
+
+        .chat-message.other .chat-message-bubble {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--menu-text);
+            border-bottom-left-radius: 5px;
+        }
+
+        .chat-input-container {
+            padding: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            padding: 12px 20px;
+            color: var(--menu-text);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: #d32f2f;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .chat-send-btn {
+            background: #d32f2f;
+            border: none;
+            color: #fff;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-send-btn:hover {
+            background: #b71c1c;
+            transform: scale(1.1);
+        }
+
+        .chat-toggle-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 80px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #d32f2f, #b71c1c);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(211, 47, 47, 0.5);
+            z-index: 150;
+            transition: all 0.3s;
+        }
+
+        .chat-toggle-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 30px rgba(211, 47, 47, 0.7);
+        }
+
+        .chat-toggle-btn i {
+            color: #fff;
+            font-size: 1.5rem;
+        }
+
+        .chat-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #4caf50;
+            color: #fff;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+            animation: pulse-badge 2s infinite;
+        }
+
+        @keyframes pulse-badge {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .chat-container {
+                width: 100vw;
+                height: 100vh;
+                bottom: 0;
+                right: 0;
+                border-radius: 0;
+            }
+
+            .chat-header {
+                border-radius: 0;
+            }
+
+            .chat-toggle-btn {
+                bottom: 100px;
+                right: 20px;
+                width: 55px;
+                height: 55px;
+            }
+        }
     </style>
+
+    <!-- Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-XXXXXXXXXX'); // Reemplazar con tu ID real
+        
+        // Eventos personalizados
+        function trackRadioEvent(action, label) {
+            gtag('event', action, {
+                'event_category': 'Radio',
+                'event_label': label
+            });
+        }
+    </script>
 </head>
 
 <body>
@@ -1045,6 +1488,19 @@
             </button>
         </div>
     </header>
+
+    <!-- Connection Quality Indicator -->
+    <div class="connection-indicator" id="connection-indicator">
+        <div class="connection-dot" id="connection-dot"></div>
+        <div class="connection-text">
+            <div class="connection-status" id="connection-status">Conectando...</div>
+            <div class="connection-stats" id="connection-stats">Cargando...</div>
+            <div class="buffer-indicator">
+                <div class="buffer-fill" id="buffer-fill"></div>
+            </div>
+        </div>
+    </div>
+
 
     <main id="radio-container">
         <div class="radio-case">
@@ -1306,6 +1762,7 @@
         }
 
         function stopPlayback() {
+            if (typeof trackRadioEvent === 'function') trackRadioEvent('stop', 'Radio Stopped');
             elements.audio.pause();
             STATE.isPlaying = false;
             
@@ -1691,8 +2148,504 @@
             console.log('▶️ Reproduciendo');
             STATE.reconnectAttempts = 0;
         });
+
+        // ============================================
+        // SERVICE WORKER (PWA)
+        // ============================================
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('✅ Service Worker registrado:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('❌ Error al registrar Service Worker:', error);
+                    });
+            });
+        }
+        
+        // Detectar cuando la app está instalada
+        window.addEventListener('appinstalled', () => {
+            console.log('🎉 App instalada exitosamente!');
+            // Opcional: enviar analytics
+        });
+        
+        // Botón de instalación PWA
+        let deferredPrompt;
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            // Mostrar botón de instalación (opcional, podrías agregarlo al menú)
+            console.log('💡 La app puede ser instalada');
+            
+            // Podrías agregar un botón en el menú para instalar:
+            // showInstallButton();
+        });
+
+
+        // ============================================
+        // BUFFER ADAPTATIVO Y MONITOREO DE CONEXIÓN
+        // ============================================
+        
+        const connectionMonitor = {
+            indicator: null,
+            dot: null,
+            statusText: null,
+            statsText: null,
+            bufferFill: null,
+            quality: 'unknown',
+            bufferHealth: 0,
+            lastUpdateTime: Date.now(),
+            hideTimeout: null,
+            
+            init() {
+                this.indicator = document.getElementById('connection-indicator');
+                this.dot = document.getElementById('connection-dot');
+                this.statusText = document.getElementById('connection-status');
+                this.statsText = document.getElementById('connection-stats');
+                this.bufferFill = document.getElementById('buffer-fill');
+                
+                // Configurar buffer adaptativo
+                this.setupAdaptiveBuffer();
+                
+                // Monitorear calidad de conexión
+                this.startMonitoring();
+                
+                // Ocultar indicador después de 5 segundos si todo está bien
+                this.scheduleHide();
+            },
+            
+            setupAdaptiveBuffer() {
+                // Detectar tipo de conexión
+                if ('connection' in navigator) {
+                    const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+                    
+                    const updateBuffer = () => {
+                        const effectiveType = connection.effectiveType;
+                        
+                        if (effectiveType === '4g' || effectiveType === 'wifi') {
+                            elements.audio.preload = 'auto';
+                            console.log('📶 Conexión 4G/WiFi: Buffer completo');
+                        } else if (effectiveType === '3g') {
+                            elements.audio.preload = 'metadata';
+                            console.log('📶 Conexión 3G: Buffer medio');
+                        } else if (effectiveType === '2g' || effectiveType === 'slow-2g') {
+                            elements.audio.preload = 'none';
+                            console.log('📶 Conexión lenta: Buffer mínimo');
+                        } else {
+                            elements.audio.preload = 'auto';
+                            console.log('📶 Conexión desconocida: Buffer por defecto');
+                        }
+                        
+                        this.updateQualityIndicator(effectiveType);
+                    };
+                    
+                    // Actualizar al inicio
+                    updateBuffer();
+                    
+                    // Actualizar cuando cambie la conexión
+                    connection.addEventListener('change', updateBuffer);
+                } else {
+                    // Si no soporta Network Information API, usar buffer completo
+                    elements.audio.preload = 'auto';
+                    console.log('📶 API de conexión no disponible: Buffer completo');
+                }
+            },
+            
+            startMonitoring() {
+                // Monitorear progreso del buffer
+                elements.audio.addEventListener('progress', () => {
+                    this.updateBufferStats();
+                });
+                
+                // Monitorear eventos de audio
+                elements.audio.addEventListener('waiting', () => {
+                    this.updateStatus('Buffering...', 'fair', '⏳ Cargando stream');
+                    this.show();
+                });
+                
+                elements.audio.addEventListener('playing', () => {
+                    this.updateStatus('En vivo', 'excellent', '▶️ Reproduciendo');
+                    this.scheduleHide();
+                });
+                
+                elements.audio.addEventListener('stalled', () => {
+                    this.updateStatus('Stream lento', 'poor', '⚠️ Conexión inestable');
+                    this.show();
+                });
+                
+                elements.audio.addEventListener('error', () => {
+                    this.updateStatus('Sin conexión', 'offline', '❌ Error de stream');
+                    this.show();
+                });
+                
+                elements.audio.addEventListener('canplay', () => {
+                    this.updateStatus('Listo', 'good', '✓ Buffer cargado');
+                    this.scheduleHide();
+                });
+                
+                // Actualizar buffer cada segundo cuando está reproduciendo
+                setInterval(() => {
+                    if (STATE.isPlaying) {
+                        this.updateBufferStats();
+                    }
+                }, 1000);
+            },
+            
+            updateBufferStats() {
+                try {
+                    const buffered = elements.audio.buffered;
+                    if (buffered.length > 0) {
+                        const bufferedEnd = buffered.end(buffered.length - 1);
+                        const currentTime = elements.audio.currentTime;
+                        this.bufferHealth = bufferedEnd - currentTime;
+                        
+                        // Actualizar barra de buffer (0-10 segundos)
+                        const bufferPercent = Math.min((this.bufferHealth / 10) * 100, 100);
+                        this.bufferFill.style.width = bufferPercent + '%';
+                        
+                        // Actualizar estadísticas
+                        const stats = `Buffer: ${this.bufferHealth.toFixed(1)}s`;
+                        this.statsText.textContent = stats;
+                        
+                        // Actualizar calidad basada en buffer
+                        if (this.bufferHealth > 5) {
+                            this.dot.className = 'connection-dot excellent';
+                        } else if (this.bufferHealth > 2) {
+                            this.dot.className = 'connection-dot good';
+                        } else if (this.bufferHealth > 0.5) {
+                            this.dot.className = 'connection-dot fair';
+                        } else {
+                            this.dot.className = 'connection-dot poor';
+                        }
+                        
+                        // Mostrar si buffer es bajo
+                        if (this.bufferHealth < 2 && STATE.isPlaying) {
+                            this.show();
+                            clearTimeout(this.hideTimeout);
+                        }
+                        
+                        console.log(`📊 Buffer: ${this.bufferHealth.toFixed(2)}s | ${bufferPercent.toFixed(0)}%`);
+                    }
+                } catch (error) {
+                    console.error('Error al leer buffer:', error);
+                }
+            },
+            
+            updateQualityIndicator(effectiveType) {
+                let quality, status;
+                
+                switch(effectiveType) {
+                    case '4g':
+                    case 'wifi':
+                        quality = 'excellent';
+                        status = 'Excelente';
+                        break;
+                    case '3g':
+                        quality = 'good';
+                        status = 'Buena';
+                        break;
+                    case '2g':
+                        quality = 'fair';
+                        status = 'Regular';
+                        break;
+                    case 'slow-2g':
+                        quality = 'poor';
+                        status = 'Lenta';
+                        break;
+                    default:
+                        quality = 'good';
+                        status = 'Normal';
+                }
+                
+                this.quality = quality;
+                this.statusText.textContent = status;
+                this.dot.className = 'connection-dot ' + quality;
+                this.statsText.textContent = `Conexión ${effectiveType || 'desconocida'}`;
+            },
+            
+            updateStatus(status, quality, stats) {
+                this.statusText.textContent = status;
+                this.dot.className = 'connection-dot ' + quality;
+                this.statsText.textContent = stats;
+                this.quality = quality;
+            },
+            
+            show() {
+                clearTimeout(this.hideTimeout);
+                this.indicator.classList.add('visible');
+            },
+            
+            hide() {
+                this.indicator.classList.remove('visible');
+            },
+            
+            scheduleHide() {
+                clearTimeout(this.hideTimeout);
+                this.hideTimeout = setTimeout(() => {
+                    if (this.quality === 'excellent' || this.quality === 'good') {
+                        this.hide();
+                    }
+                }, 5000);
+            }
+        };
+        
+        // Inicializar monitor de conexión cuando cargue la página
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                connectionMonitor.init();
+            }, 1000);
+        });
+
+
+        // ============================================
+        // ESTADÍSTICAS AVANZADAS DE STREAM
+        // ============================================
+        
+        const streamStats = {
+            startTime: null,
+            totalPlayTime: 0,
+            bufferingTime: 0,
+            reconnections: 0,
+            lastBufferUpdate: Date.now(),
+            
+            init() {
+                // Trackear tiempo de reproducción
+                elements.audio.addEventListener('playing', () => {
+                    if (!this.startTime) this.startTime = Date.now();
+                });
+                
+                // Trackear buffering
+                elements.audio.addEventListener('waiting', () => {
+                    this.lastBufferUpdate = Date.now();
+                });
+                
+                elements.audio.addEventListener('playing', () => {
+                    if (this.lastBufferUpdate) {
+                        const bufferDuration = Date.now() - this.lastBufferUpdate;
+                        this.bufferingTime += bufferDuration;
+                        this.lastBufferUpdate = null;
+                    }
+                });
+                
+                // Mostrar estadísticas cada 30 segundos
+                setInterval(() => {
+                    if (STATE.isPlaying) {
+                        this.logStats();
+                    }
+                }, 30000);
+            },
+            
+            logStats() {
+                const totalTime = this.startTime ? (Date.now() - this.startTime) / 1000 : 0;
+                const bufferPercent = totalTime > 0 ? (this.bufferingTime / 1000 / totalTime * 100) : 0;
+                
+                console.log('═══════════════════════════════════════');
+                console.log('📊 ESTADÍSTICAS DE STREAM');
+                console.log('═══════════════════════════════════════');
+                console.log(`⏱️  Tiempo total: ${Math.floor(totalTime / 60)}m ${Math.floor(totalTime % 60)}s`);
+                console.log(`⏳ Buffering: ${(this.bufferingTime / 1000).toFixed(1)}s (${bufferPercent.toFixed(1)}%)`);
+                console.log(`🔄 Reconexiones: ${STATE.reconnectAttempts}`);
+                console.log(`📶 Calidad: ${connectionMonitor.quality}`);
+                console.log(`💾 Buffer actual: ${connectionMonitor.bufferHealth.toFixed(2)}s`);
+                console.log('═══════════════════════════════════════');
+            }
+        };
+        
+        // Inicializar estadísticas
+        streamStats.init();
+
+
+        // ============================================
+        // CHAT EN VIVO (PREPARADO PARA IMPLEMENTAR)
+        // ============================================
+        
+        const chatSystem = {
+            container: null,
+            toggleBtn: null,
+            closeBtn: null,
+            messagesContainer: null,
+            input: null,
+            sendBtn: null,
+            badge: null,
+            unreadCount: 0,
+            isOpen: false,
+            
+            init() {
+                this.container = document.getElementById('chat-container');
+                this.toggleBtn = document.getElementById('chat-toggle');
+                this.closeBtn = document.getElementById('chat-close');
+                this.messagesContainer = document.getElementById('chat-messages');
+                this.input = document.getElementById('chat-input');
+                this.sendBtn = document.getElementById('chat-send');
+                this.badge = document.getElementById('chat-badge');
+                
+                // Event listeners
+                this.toggleBtn.addEventListener('click', () => this.toggle());
+                this.closeBtn.addEventListener('click', () => this.close());
+                
+                // Enter para enviar (cuando esté habilitado)
+                this.input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && !this.input.disabled) {
+                        this.sendMessage();
+                    }
+                });
+                
+                this.sendBtn.addEventListener('click', () => {
+                    if (!this.sendBtn.disabled) {
+                        this.sendMessage();
+                    }
+                });
+                
+                console.log('💬 Chat en vivo preparado (actualmente deshabilitado)');
+                
+                // NOTA: Para habilitar el chat, necesitás:
+                // 1. Un backend (Firebase, Socket.io, etc.)
+                // 2. Descomentar las funciones below
+                // 3. Remover los atributos "disabled" del input y botón
+            },
+            
+            toggle() {
+                if (this.isOpen) {
+                    this.close();
+                } else {
+                    this.open();
+                }
+            },
+            
+            open() {
+                this.isOpen = true;
+                this.container.classList.add('visible');
+                this.unreadCount = 0;
+                this.updateBadge();
+                this.input.focus();
+            },
+            
+            close() {
+                this.isOpen = false;
+                this.container.classList.remove('visible');
+            },
+            
+            sendMessage() {
+                const message = this.input.value.trim();
+                if (!message) return;
+                
+                // Agregar mensaje propio
+                this.addMessage(message, 'own', 'Vos');
+                this.input.value = '';
+                
+                // TODO: Enviar al servidor
+                // socket.emit('message', message);
+                
+                // Auto-scroll
+                this.scrollToBottom();
+            },
+            
+            addMessage(text, type, author) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `chat-message ${type}`;
+                
+                const authorDiv = document.createElement('div');
+                authorDiv.className = 'chat-message-author';
+                authorDiv.textContent = author;
+                
+                const bubbleDiv = document.createElement('div');
+                bubbleDiv.className = 'chat-message-bubble';
+                bubbleDiv.textContent = text;
+                
+                messageDiv.appendChild(authorDiv);
+                messageDiv.appendChild(bubbleDiv);
+                this.messagesContainer.appendChild(messageDiv);
+                
+                // Actualizar badge si chat está cerrado
+                if (!this.isOpen && type === 'other') {
+                    this.unreadCount++;
+                    this.updateBadge();
+                }
+                
+                this.scrollToBottom();
+            },
+            
+            updateBadge() {
+                if (this.unreadCount > 0) {
+                    this.badge.textContent = this.unreadCount;
+                    this.badge.style.display = 'flex';
+                } else {
+                    this.badge.style.display = 'none';
+                }
+            },
+            
+            scrollToBottom() {
+                this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight;
+            }
+            
+            // TODO: Implementar conexión con backend
+            // connectToServer() {
+            //     const socket = io('https://tu-servidor.com');
+            //     
+            //     socket.on('message', (data) => {
+            //         this.addMessage(data.text, 'other', data.author);
+            //     });
+            //     
+            //     socket.on('online-count', (count) => {
+            //         document.getElementById('chat-online-count').textContent = 
+            //             `${count} en línea`;
+            //     });
+            // }
+        };
+        
+        // Inicializar chat
+        chatSystem.init();
+
         console.log('🎵 Radio El Brote initialized successfully!');
     </script>
+
+
+    <!-- Chat en Vivo (Preparado) -->
+    <div class="chat-toggle-btn" id="chat-toggle" title="Chat en vivo">
+        <i class="fas fa-comments"></i>
+        <span class="chat-badge" id="chat-badge" style="display: none;">0</span>
+    </div>
+
+    <div class="chat-container" id="chat-container">
+        <div class="chat-header">
+            <div style="display: flex; flex-direction: column; gap: 3px;">
+                <div class="chat-title">
+                    <i class="fas fa-comment-dots"></i>
+                    Chat en Vivo
+                </div>
+                <div class="chat-online">
+                    <div class="chat-online-dot"></div>
+                    <span id="chat-online-count">Próximamente</span>
+                </div>
+            </div>
+            <button class="chat-close-btn" id="chat-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+            <!-- Mensaje de bienvenida -->
+            <div class="chat-message other">
+                <div class="chat-message-author">🎙️ Radio El Brote</div>
+                <div class="chat-message-bubble">
+                    ¡Bienvenido al chat de Radio El Brote! Esta función estará disponible próximamente. Mientras tanto, podés contactarnos por WhatsApp. 🌱
+                </div>
+            </div>
+        </div>
+        <div class="chat-input-container">
+            <input type="text" 
+                   class="chat-input" 
+                   id="chat-input" 
+                   placeholder="Escribí tu mensaje..." 
+                   disabled
+                   title="Chat próximamente disponible">
+            <button class="chat-send-btn" id="chat-send" disabled title="Próximamente">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
 
 </body>
 </html>
