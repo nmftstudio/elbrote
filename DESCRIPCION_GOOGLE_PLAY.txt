@@ -1,0 +1,232 @@
+═══════════════════════════════════════════════════════════════════
+  📻 RADIO EL BROTE 90.3 FM - GOOGLE PLAY STORE
+═══════════════════════════════════════════════════════════════════
+
+TÍTULO DE LA APP (30 caracteres máx):
+Radio El Brote 90.3 FM
+
+DESCRIPCIÓN CORTA (80 caracteres máx):
+Radio Comunitaria desde Villa Ciudad Parque. Comunicación popular en vivo.
+
+═══════════════════════════════════════════════════════════════════
+  DESCRIPCIÓN COMPLETA (4000 caracteres máx)
+═══════════════════════════════════════════════════════════════════
+
+🎙️ Radio Comunitaria El Brote 90.3 FM
+
+Escuchá Radio El Brote en vivo desde cualquier lugar. Comunicación popular, alternativa y comunitaria desde Villa Ciudad Parque, Córdoba, Argentina.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🌱 ¿QUIÉNES SOMOS?
+
+Radio Comunitaria El Brote es una radio sin fines de lucro que brinda comunicación popular a Villa Ciudad Parque y la región. Somos parte de FARCO (Foro Argentino de Radios Comunitarias) y trabajamos por una comunicación horizontal, participativa y al servicio de la comunidad.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✨ CARACTERÍSTICAS PRINCIPALES
+
+📻 STREAMING EN VIVO
+• Escuchá la radio en tiempo real 24/7
+• Audio de alta calidad
+• Reconexión automática si se corta la señal
+• Funciona en segundo plano
+
+📊 CALIDAD DE CONEXIÓN INTELIGENTE
+• Indicador visual del estado de tu conexión
+• Adaptación automática según tu red (WiFi/4G/3G/2G)
+• Ahorro de datos en conexiones móviles
+• Optimización de buffer para evitar cortes
+
+🎨 DISEÑO RETRO ÚNICO
+• Interfaz inspirada en radios vintage
+• Perilla de volumen interactiva
+• Visualizador de audio en tiempo real
+• Animaciones suaves y atractivas
+
+🌓 MODO OSCURO/CLARO
+• Cambia entre temas según tu preferencia
+• Ahorra batería en modo oscuro
+• Colores inspirados en la identidad de la radio
+
+💬 CONTACTO DIRECTO
+• Botón de WhatsApp para mensajes instantáneos
+• Contactá a los conductores durante los programas
+• Pedí tu música favorita
+
+📱 FUNCIONA COMO APP NATIVA
+• Instalable en tu pantalla de inicio
+• Notificaciones de control multimedia
+• Funciona sin el navegador abierto
+• Consume menos recursos
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 FUNCIONALIDADES TÉCNICAS
+
+⚡ RENDIMIENTO OPTIMIZADO
+• Carga rápida (< 2 segundos)
+• Optimización para dispositivos de gama baja
+• Consumo mínimo de batería
+• Uso eficiente de datos móviles
+
+🔄 RECONEXIÓN INTELIGENTE
+• 5 intentos automáticos si se pierde la señal
+• Sin necesidad de intervención del usuario
+• Logs informativos para debugging
+
+📈 BUFFER ADAPTATIVO
+• 4G/WiFi: Buffer completo para mejor calidad
+• 3G: Buffer medio, balance calidad/datos
+• 2G: Buffer mínimo, máximo ahorro de datos
+• Cambio automático al detectar cambios en la red
+
+🎛️ CONTROLES MULTIMEDIA
+• Pausa/Play desde notificaciones
+• Control desde auriculares Bluetooth
+• Integración con Android Auto (próximamente)
+• Controles en pantalla de bloqueo
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🌟 ¿POR QUÉ DESCARGAR ESTA APP?
+
+✓ GRATIS Y SIN PUBLICIDAD
+Nunca mostraremos anuncios ni cobraremos por escuchar
+
+✓ SOPORTE A LA COMUNICACIÓN POPULAR
+Cada descarga y escucha apoya la radio comunitaria
+
+✓ CONTENIDO LOCAL Y ALTERNATIVO
+Programación pensada por y para la comunidad
+
+✓ MÚSICA DIVERSA
+Rock, folklore, música independiente y mucho más
+
+✓ NOTICIAS LOCALES
+Información que no encontrás en medios masivos
+
+✓ PARTICIPACIÓN COMUNITARIA
+Tu voz importa, podés ser parte de la programación
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📻 PROGRAMACIÓN DESTACADA
+
+🎸 ROCK & MÚSICA INDEPENDIENTE
+Programas dedicados a rock nacional, alternativo y bandas emergentes
+
+🗣️ PALABRA Y DEBATE
+Programas de análisis político, social y cultural desde una perspectiva popular
+
+🎶 FOLKLORE & RAÍCES
+La mejor música folklórica argentina y latinoamericana
+
+📰 NOTICIAS COMUNITARIAS
+Información local y regional que te importa
+
+🎭 CULTURA Y ARTE
+Difusión de eventos culturales, entrevistas a artistas locales
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔒 PRIVACIDAD Y PERMISOS
+
+La app respeta tu privacidad:
+• No recopilamos datos personales
+• Solo estadísticas anónimas de uso (opcional)
+• Sin tracking invasivo
+• Código fuente disponible
+
+Permisos necesarios:
+• INTERNET: Para streaming de audio
+• WAKE_LOCK: Para reproducir en segundo plano
+• FOREGROUND_SERVICE: Para controles multimedia
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🌍 SOBRE Villa Ciudad Parque
+
+Villa Ciudad Parque es una pintoresca localidad en el Valle de Calamuchita, Córdoba, Argentina. Conocida por su arquitectura biodinamica y su estilo de vida natural, es hogar de Radio El Brote, y de la Asociacion civil Semillas del Sur que la contiene.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📞 CONTACTO
+
+🌐 Web: https://elbrote.org
+📱 WhatsApp: +54 9 3546 532523
+📧 Email: radiocomunitariaelbrote@gmail.com
+📍 Dirección: El Semillero Villa Ciudad Parque, Córdoba, Argentina
+
+Redes Sociales:
+🔵 Facebook: /radioelbrote903
+📷 Instagram: @elbrote903
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💚 APOYÁ LA RADIO COMUNITARIA
+
+Como radio comunitaria sin fines de lucro, dependemos del apoyo de oyentes como vos. Podés colaborar:
+
+• Suscribiéndote mensualmente
+• Donación única
+• Difundiendo nuestra programación
+• Participando en eventos
+
+Más info en: https://elbrote.org/suscripcion
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🏆 RECONOCIMIENTOS
+
+• Miembro de FARCO (Foro Argentino de Radios Comunitarias)
+• Reconocida por AFSCA como radio comunitaria
+• Premio Local de Comunicación Popular 2018
+• Más de 25 años al aire
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📱 REQUISITOS DEL SISTEMA
+
+• Android 5.0 o superior
+• Conexión a Internet (WiFi o datos móviles)
+• 50 MB de espacio libre
+• Recomendado: Android 8.0+ para mejor experiencia
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🆕 ACTUALIZACIONES RECIENTES
+
+Versión 2.0 (Febrero 2026):
+✓ Indicador de calidad de conexión en tiempo real
+✓ Buffer adaptativo según tipo de red
+✓ Estadísticas de streaming
+✓ Diseño completamente renovado
+✓ Optimización de rendimiento
+✓ Corrección de bugs menores
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+❓ PREGUNTAS FRECUENTES
+
+P: ¿La app consume muchos datos?
+R: En 4G/WiFi aproximadamente 100 MB por hora. En 3G se reduce automáticamente a 60-80 MB/hora.
+
+P: ¿Puedo escuchar con la pantalla apagada?
+R: Sí, la app sigue reproduciendo en segundo plano.
+
+P: ¿Funciona sin Internet?
+R: No, necesitás conexión para el streaming en vivo.
+
+P: ¿Por qué la app es gratis?
+R: Somos una radio comunitaria sin fines de lucro. Nos financiamos con suscripciones voluntarias.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🌱 ¡QUE SIGA BROTANDO LA COMUNICACIÓN POPULAR!
+
+Descargá la app y formá parte de nuestra comunidad de oyentes. 
+Radio Comunitaria El Brote 90.3 FM - Comunicación para transformar.
+
+═══════════════════════════════════════════════════════════════════
