@@ -138,6 +138,7 @@ header {
     background: transparent !important;
     animation: logoFloat 4s ease-in-out infinite;
     display: block;
+    mix-blend-mode: screen;
 }
 
 @keyframes logoFloat {
@@ -156,6 +157,11 @@ header {
     filter: drop-shadow(3px 3px 12px rgba(239, 83, 80, 0.8));
     transform: scale(1.1) !important;
     animation-play-state: paused;
+}
+
+/* En modo claro el fondo del logo es negro: usar multiply sobre fondo claro */
+:root[data-theme="light"] .logo-image {
+    mix-blend-mode: multiply;
 }
 
 #menu-btn,
@@ -1522,19 +1528,128 @@ header {
     opacity: 0.85;
     transition: opacity 0.3s ease !important;
 }
-
-.menu-semilla-logo:hover {
-    opacity: 1;
-}
-
+.menu-semilla-logo:hover { opacity: 1; }
 .semilla-logo-img {
-    height: 70px;
-    width: auto;
-    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.4));
+    height: 70px; width: auto;
+    filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));
     transition: transform 0.3s ease, filter 0.3s ease;
 }
-
 .semilla-logo-img:hover {
     transform: scale(1.08);
-    filter: drop-shadow(0 4px 16px rgba(255, 255, 255, 0.3));
+    filter: drop-shadow(0 4px 16px rgba(255,255,255,0.3));
+}
+
+/* ============================================
+   nmftSTUDIO — Firma en panel configuración
+   ============================================ */
+.nmft-signature {
+    margin-top: 24px; padding-top: 18px;
+    border-top: 1px solid rgba(255,255,255,0.07);
+    text-align: center;
+}
+.nmft-link {
+    display: inline-block; text-decoration: none;
+    transition: opacity 0.3s ease;
+}
+.nmft-text {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 1rem; color: #546E7A;
+    letter-spacing: 2px; opacity: 0.65;
+    transition: all 0.3s ease; display: inline-block;
+}
+.nmft-text strong { color: #d32f2f; font-size: 1.08rem; }
+.nmft-link:hover .nmft-text {
+    opacity: 1;
+    filter: drop-shadow(0 0 8px rgba(211,47,47,0.6));
+}
+.nmft-sub {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem; color: #37474F;
+    margin-top: 4px; letter-spacing: 1px;
+}
+
+/* ============================================
+   MINI JUEGO — Radio Runner
+   ============================================ */
+.game-float-btn {
+    position: fixed; bottom: 80px; left: 20px;
+    width: 54px; height: 54px;
+    background: linear-gradient(135deg, #d32f2f, #b71c1c);
+    border: none; border-radius: 50%; font-size: 1.5rem;
+    cursor: pointer; z-index: 150;
+    box-shadow: 0 4px 20px rgba(211,47,47,0.5);
+    transition: all 0.3s cubic-bezier(0.175,0.885,0.32,1.275);
+    display: flex; align-items: center; justify-content: center;
+    animation: gameBtnPulse 3.5s ease-in-out infinite;
+}
+.game-float-btn:hover {
+    transform: scale(1.18) rotate(-8deg);
+    box-shadow: 0 6px 30px rgba(211,47,47,0.7);
+}
+@keyframes gameBtnPulse {
+    0%, 100% { box-shadow: 0 4px 20px rgba(211,47,47,0.5); }
+    50%       { box-shadow: 0 4px 30px rgba(211,47,47,0.85), 0 0 0 9px rgba(211,47,47,0.12); }
+}
+.game-modal {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.88);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 9999;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    pointer-events: none;
+}
+.game-modal.visible {
+    opacity: 1; visibility: visible;
+    pointer-events: all;
+}
+.game-modal-inner {
+    background: #0d0d1a;
+    border: 2px solid #d32f2f; border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.9), 0 0 40px rgba(211,47,47,0.25);
+    max-width: 96vw;
+}
+.game-modal-header {
+    background: linear-gradient(90deg, #b71c1c, #d32f2f, #b71c1c);
+    padding: 10px 16px; display: flex;
+    align-items: center; justify-content: space-between;
+}
+.game-modal-title {
+    color: #fff; font-family: 'Share Tech Mono', monospace;
+    font-size: 0.95rem; font-weight: bold;
+    letter-spacing: 3px; text-shadow: 0 0 10px rgba(255,255,255,0.3);
+}
+.game-close-btn {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.25);
+    color: #fff; width: 30px; height: 30px;
+    border-radius: 50%; font-size: 0.9rem; cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex; align-items: center; justify-content: center;
+    line-height: 1;
+}
+.game-close-btn:hover {
+    background: rgba(255,255,255,0.35);
+    transform: rotate(90deg) scale(1.1);
+}
+#game-canvas {
+    display: block; width: 480px; max-width: 100%;
+    height: auto; cursor: pointer;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    -ms-interpolation-mode: nearest-neighbor;
+}
+.game-hint {
+    background: #060610; padding: 7px 16px;
+    text-align: center; font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem; color: #37474F; letter-spacing: 1px;
+    border-top: 1px solid rgba(211,47,47,0.2);
+}
+@media (max-width: 520px) {
+    .game-float-btn { width: 46px; height: 46px; font-size: 1.3rem; bottom: 90px; left: 14px; }
+    .game-modal-title { font-size: 0.8rem; letter-spacing: 2px; }
+    .game-hint { font-size: 0.6rem; }
 }

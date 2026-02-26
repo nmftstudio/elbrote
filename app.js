@@ -1,3 +1,14 @@
+/**
+ * ============================================
+ *  Radio Comunitaria El Brote 90.3 FM
+ *  App Principal — PWA
+ *
+ *  Desarrollado por nmftSTUDIO
+ *  nmftstudio@gmail.com
+ *  https://nmftstudio.great-site.net
+ * ============================================
+ */
+
 window.dataLayer = window.dataLayer || [];
 function gtag() { dataLayer.push(arguments); }
 gtag('js', new Date());
@@ -10,7 +21,6 @@ function trackRadioEvent(action, label) {
         'event_label': label
     });
 }
-
 
 // Radio El Brote - Standalone Version
 const CONFIG = {
@@ -25,8 +35,11 @@ const STATE = {
     theme: localStorage.getItem('theme') || 'dark',
     visualizerMode: localStorage.getItem('visualizerMode') || 'bars',
     audioContext: null,
-    analyser: null
+    analyser: null,
+    reconnectAttempts: 0
 };
+
+let reconnectTimeout = null;
 
 let elements = {};
 let particles = [];
@@ -51,6 +64,41 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
         elements.volumeBar.style.width = '83.33%';
     }, 100);
+
+    // Estadísticas de stream (requiere elements.audio listo)
+    streamStats.init();
+
+    // Sistema de reconexión automática (movido aquí para que elements.audio esté disponible)
+    if (elements.audio) {
+        elements.audio.addEventListener('error', (e) => {
+            console.error('⚠️ Error de audio:', e);
+            if (STATE.isPlaying && STATE.reconnectAttempts < 5) {
+                STATE.reconnectAttempts++;
+                console.log(`🔄 Reconectando automáticamente (${STATE.reconnectAttempts}/5)...`);
+                clearTimeout(reconnectTimeout);
+                reconnectTimeout = setTimeout(() => {
+                    elements.audio.load();
+                    startPlayback();
+                }, 3000);
+            }
+        });
+
+        elements.audio.addEventListener('stalled', () => {
+            console.warn('⚠️ Stream estancado, recargando...');
+            if (STATE.isPlaying) {
+                elements.audio.load();
+            }
+        });
+
+        elements.audio.addEventListener('waiting', () => {
+            console.log('⏳ Buffering...');
+        });
+
+        elements.audio.addEventListener('playing', () => {
+            console.log('▶️ Reproduciendo');
+            STATE.reconnectAttempts = 0;
+        });
+    }
 });
 
 function initializeElements() {
@@ -519,45 +567,12 @@ function updateMediaSession() {
 }
 
 
-// Sistema de reconexión automática
-let reconnectTimeout;
-
-elements.audio.addEventListener('error', (e) => {
-    console.error('⚠️ Error de audio:', e);
-    if (STATE.isPlaying && STATE.reconnectAttempts < 5) {
-        STATE.reconnectAttempts++;
-        console.log(`🔄 Reconectando automáticamente (${STATE.reconnectAttempts}/5)...`);
-
-        clearTimeout(reconnectTimeout);
-        reconnectTimeout = setTimeout(() => {
-            elements.audio.load();
-            startPlayback();
-        }, 3000);
-    }
-});
-
-elements.audio.addEventListener('stalled', () => {
-    console.warn('⚠️ Stream estancado, recargando...');
-    if (STATE.isPlaying) {
-        elements.audio.load();
-    }
-});
-
-elements.audio.addEventListener('waiting', () => {
-    console.log('⏳ Buffering...');
-});
-
-elements.audio.addEventListener('playing', () => {
-    console.log('▶️ Reproduciendo');
-    STATE.reconnectAttempts = 0;
-});
-
 // ============================================
 // SERVICE WORKER (PWA)
 // ============================================
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
+        navigator.serviceWorker.register('./sw.js')
             .then(registration => {
                 console.log('✅ Service Worker registrado:', registration.scope);
             })
@@ -857,8 +872,7 @@ const streamStats = {
     }
 };
 
-// Inicializar estadísticas
-streamStats.init();
+// streamStats.init() se llama dentro de DOMContentLoaded
 
 
 /*
@@ -1006,3 +1020,56 @@ chatSystem.init();
 
 console.log('🎵 Radio El Brote initialized successfully!');
 
+// ============================================
+// MINI JUEGO — Radio Runner
+// nmftSTUDIO / nmftstudio@gmail.com
+// ============================================
+document.addEventListener('DOMContentLoaded', function () {
+    const gameBtn    = document.getElementById('game-btn');
+    const gameModal  = document.getElementById('game-modal');
+    const gameCanvas = document.getElementById('game-canvas');
+    const closeGame  = document.getElementById('close-game');
+
+    if (!gameBtn || !gameModal || !gameCanvas || !closeGame) {
+        console.warn('Radio Runner: no se encontraron los elementos del juego.');
+        return;
+    }
+
+    if (typeof RadioRunner === 'undefined') {
+        console.warn('Radio Runner: game.js no está cargado.');
+        return;
+    }
+
+    let started = false;
+
+    function openGame() {
+        gameModal.classList.add('visible');
+        document.body.style.overflow = 'hidden';
+        if (!started) {
+            RadioRunner.init(gameCanvas);
+            started = true;
+        }
+    }
+
+    function closeGameFn() {
+        gameModal.classList.remove('visible');
+        document.body.style.overflow = '';
+        RadioRunner.destroy();
+        started = false;
+    }
+
+    gameBtn.addEventListener('click', openGame);
+    closeGame.addEventListener('click', closeGameFn);
+
+    gameModal.addEventListener('click', function (e) {
+        if (e.target === gameModal) closeGameFn();
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && gameModal.classList.contains('visible')) {
+            closeGameFn();
+        }
+    });
+
+    console.log('🎮 Radio Runner listo!');
+});

@@ -1,11 +1,16 @@
 // Service Worker para Radio El Brote PWA
 // Version 1.0.0
 
-const CACHE_NAME = 'radio-elbrote-v1.0.0';
+const CACHE_NAME = 'radio-elbrote-v2.1.0';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
+  '/styles.css',
+  '/app.js',
+  '/game.js',
   '/manifest.json',
+  '/LOGO.png',
+  '/logo-semilla.png',
   '/icon-192.png',
   '/icon-512.png',
   // No cachear el stream de audio para tener siempre la versión en vivo
