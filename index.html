@@ -229,7 +229,12 @@
         <div class="game-modal-inner">
             <div class="game-modal-header">
                 <span class="game-modal-title">📻 RADIO RUNNER</span>
-                <button id="close-game" class="game-close-btn" aria-label="Cerrar juego">✕</button>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <button id="game-mute-btn" class="game-mute-btn" aria-label="Silenciar juego" title="Silenciar sonidos del juego">
+                        🔊
+                    </button>
+                    <button id="close-game" class="game-close-btn" aria-label="Cerrar juego">✕</button>
+                </div>
             </div>
             <canvas id="game-canvas" width="480" height="220"></canvas>
             <div class="game-hint">

@@ -454,7 +454,7 @@ const RadioRunner = (() => {
         try {
             aCtx    = new (window.AudioContext || window.webkitAudioContext)();
             masterG = aCtx.createGain();
-            masterG.gain.setValueAtTime(0.26, aCtx.currentTime);
+            masterG.gain.setValueAtTime(muted ? 0 : 0.26, aCtx.currentTime);
             const lp = aCtx.createBiquadFilter();
             lp.type  = 'lowpass'; lp.frequency.setValueAtTime(4200, aCtx.currentTime); lp.Q.value = 0.4;
             masterG.connect(lp); lp.connect(aCtx.destination);
@@ -624,6 +624,25 @@ const RadioRunner = (() => {
     }
 
     // ============================================
+    // MUTE
+    // ============================================
+    let muted = false;
+
+    function toggleMute() {
+        muted = !muted;
+        if (!masterG || !aCtx) return;
+        try {
+            masterG.gain.cancelScheduledValues(aCtx.currentTime);
+            masterG.gain.linearRampToValueAtTime(
+                muted ? 0 : 0.26,
+                aCtx.currentTime + 0.15
+            );
+        } catch(e) {}
+    }
+
+    function isMuted() { return muted; }
+
+    // ============================================
     // MANAGEMENT
     // ============================================
     function start() {
@@ -634,7 +653,7 @@ const RadioRunner = (() => {
         player.x = 70; player.y = GY - PH; player.vy = 0;
         player.onGround = true; player.animFrame = 0; player.animTick = 0;
         if (!aCtx) initAudio();
-        else if (masterG) { try { masterG.gain.setValueAtTime(0.26, aCtx.currentTime); } catch(e) {} }
+        else if (masterG) { try { masterG.gain.setValueAtTime(muted ? 0 : 0.26, aCtx.currentTime); } catch(e) {} }
     }
 
     function restart() {
@@ -664,6 +683,6 @@ const RadioRunner = (() => {
         state  = 'idle';
     }
 
-    return { init, destroy };
+    return { init, destroy, toggleMute, isMuted };
 
 })();

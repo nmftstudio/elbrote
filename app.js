@@ -1029,6 +1029,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const gameModal  = document.getElementById('game-modal');
     const gameCanvas = document.getElementById('game-canvas');
     const closeGame  = document.getElementById('close-game');
+    const muteBtn    = document.getElementById('game-mute-btn');
 
     if (!gameBtn || !gameModal || !gameCanvas || !closeGame) {
         console.warn('Radio Runner: no se encontraron los elementos del juego.');
@@ -1055,7 +1056,23 @@ document.addEventListener('DOMContentLoaded', function () {
         gameModal.classList.remove('visible');
         document.body.style.overflow = '';
         RadioRunner.destroy();
+        // Resetear mute para la próxima vez
+        if (RadioRunner.isMuted()) {
+            RadioRunner.toggleMute();
+            muteBtn.textContent = '🔊';
+            muteBtn.classList.remove('muted');
+        }
         started = false;
+    }
+
+    if (muteBtn) {
+        muteBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // no dispara jump
+            RadioRunner.toggleMute();
+            const muted = RadioRunner.isMuted();
+            muteBtn.textContent = muted ? '🔇' : '🔊';
+            muteBtn.classList.toggle('muted', muted);
+        });
     }
 
     gameBtn.addEventListener('click', openGame);

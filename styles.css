@@ -1650,6 +1650,24 @@ header {
     font-size: 0.95rem; font-weight: bold;
     letter-spacing: 3px; text-shadow: 0 0 10px rgba(255,255,255,0.3);
 }
+.game-mute-btn {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #fff;
+    width: 30px; height: 30px;
+    border-radius: 50%; font-size: 0.85rem; cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex; align-items: center; justify-content: center;
+    line-height: 1;
+}
+.game-mute-btn:hover {
+    background: rgba(255,255,255,0.25);
+    transform: scale(1.1);
+}
+.game-mute-btn.muted {
+    background: rgba(211,47,47,0.3);
+    border-color: rgba(211,47,47,0.5);
+}
 .game-close-btn {
     background: rgba(255,255,255,0.15);
     border: 1px solid rgba(255,255,255,0.25);
