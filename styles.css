@@ -1540,6 +1540,34 @@ header {
 }
 
 /* ============================================
+   Privacy Policy Link (panel configuración)
+   ============================================ */
+.privacy-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 14px;
+    padding: 9px 16px;
+    background: rgba(211, 47, 47, 0.08);
+    border: 1px solid rgba(211, 47, 47, 0.25);
+    border-radius: 6px;
+    color: #ef9a9a;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+.privacy-link:hover {
+    background: rgba(211, 47, 47, 0.18);
+    border-color: #d32f2f;
+    color: #fff;
+    transform: translateY(-1px);
+}
+.privacy-link i { font-size: 0.85rem; }
+
+/* ============================================
    nmftSTUDIO — Firma en panel configuración
    ============================================ */
 .nmft-signature {
