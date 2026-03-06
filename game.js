@@ -623,6 +623,12 @@ const RadioRunner = (() => {
         if (e.code === 'Space' || e.code === 'ArrowUp') { e.preventDefault(); jump(); }
     }
 
+    // CORRECCIÓN: Se guardan referencias a los handlers de touch/mouse
+    // para poder removerlos exactamente en destroy() y evitar acumulación
+    // de listeners al abrir/cerrar el modal varias veces.
+    let _onTouch = null;
+    let _onMouse = null;
+
     // ============================================
     // MUTE
     // ============================================
@@ -668,16 +674,28 @@ const RadioRunner = (() => {
         ctx.imageSmoothingEnabled = false;
         try { hiScore = parseInt(localStorage.getItem('rr_hi') || '0') || 0; } catch(e) {}
         initScenery();
+
+        // Guardar referencias para poder removerlas en destroy()
+        _onTouch = (e) => { e.preventDefault(); jump(); };
+        _onMouse = jump;
+
         window.addEventListener('keydown', onKey);
-        canvas.addEventListener('touchstart', e => { e.preventDefault(); jump(); }, { passive: false });
-        canvas.addEventListener('mousedown', jump);
+        canvas.addEventListener('touchstart', _onTouch, { passive: false });
+        canvas.addEventListener('mousedown', _onMouse);
+
         raf = requestAnimationFrame(loop);
         initAudio();
     }
 
     function destroy() {
         if (raf) { cancelAnimationFrame(raf); raf = null; }
+
         window.removeEventListener('keydown', onKey);
+
+        // CORRECCIÓN: remover los mismos handlers que se agregaron en init()
+        if (_onTouch) { canvas.removeEventListener('touchstart', _onTouch); _onTouch = null; }
+        if (_onMouse) { canvas.removeEventListener('mousedown', _onMouse);  _onMouse = null; }
+
         stopAudio();
         lofiOn = false;
         state  = 'idle';

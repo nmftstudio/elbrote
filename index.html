@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Radio Comunitaria El Brote 90.3 FM - Comunicación Popular desde Villa Ciudad Parque">
     <meta name="keywords" content="radio comunitaria, el brote, 90.3 FM, Villa Ciudad Parque, comunicación popular, radio online">
-    <meta name="author" content="Radio Comunitaria El Brote">
+    <meta name="author" content="nmftSTUDIO">
     <meta name="theme-color" content="#d32f2f">
 
     <!-- Open Graph -->
@@ -22,28 +22,6 @@
     <meta property="twitter:description" content="Escuchá Radio El Brote en vivo. Comunicación Popular">
     <meta property="twitter:image" content="https://elbrote.org/wp-content/uploads/2025/08/radio-comunitaria-elbrote-3.png">
 
-    <!-- Apple -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="El Brote FM">
-    <link rel="apple-touch-icon" href="icon-192.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="icon-152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
-    <link rel="apple-touch-startup-image" href="splash-640x1136.png" media="(device-width:320px) and (device-height:568px)">
-    <link rel="apple-touch-startup-image" href="splash-750x1334.png" media="(device-width:375px) and (device-height:667px)">
-    <link rel="apple-touch-startup-image" href="splash-1242x2208.png" media="(device-width:414px) and (device-height:736px)">
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
-
-    <!-- PWA -->
-    <link rel="manifest" href="manifest.json">
-
-    <!-- Windows Tile -->
-    <meta name="msapplication-TileColor" content="#d32f2f">
-    <meta name="msapplication-TileImage" content="icon-144.png">
-
     <title>Radio Comunitaria El Brote - 90.3 FM</title>
 
     <!-- Fuentes -->
@@ -52,6 +30,24 @@
 
     <!-- Estilos propios -->
     <link rel="stylesheet" href="styles.css">
+
+    <!-- ============================================
+         Google Analytics 4 — Measurement ID: G-7SV9EYDDR7
+         gtag.js funciona en la WebView de Capacitor
+         siempre que el dispositivo tenga internet.
+         ============================================ -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-7SV9EYDDR7"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-7SV9EYDDR7', {
+            // Las apps Android no tienen URL real en la WebView.
+            // Seteamos una URL canónica para que GA procese bien los hits.
+            'page_location': 'https://app.elbrote.org/',
+            'page_title': 'Radio El Brote 90.3 FM'
+        });
+    </script>
 </head>
 
 <body>
@@ -242,9 +238,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Google Analytics 4 -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
 
     <!-- game.js DEBE ir antes que app.js -->
     <script src="game.js"></script>

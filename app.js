@@ -1,7 +1,7 @@
 /**
  * ============================================
  *  Radio Comunitaria El Brote 90.3 FM
- *  App Principal — PWA
+ *  App Principal — Android (Capacitor)
  *
  *  Desarrollado por nmftSTUDIO
  *  nmftstudio@gmail.com
@@ -9,20 +9,25 @@
  * ============================================
  */
 
-window.dataLayer = window.dataLayer || [];
-function gtag() { dataLayer.push(arguments); }
-gtag('js', new Date());
-gtag('config', 'G-XXXXXXXXXX'); // Reemplazar con tu ID real
-
-// Eventos personalizados
-function trackRadioEvent(action, label) {
-    gtag('event', action, {
-        'event_category': 'Radio',
-        'event_label': label
-    });
+// ============================================
+// GOOGLE ANALYTICS 4 — Wrapper seguro
+// gtag() es inyectado por index.html.
+// Este wrapper evita errores si GA no cargó
+// (sin internet, bloqueador de anuncios, etc.)
+// ============================================
+function trackRadioEvent(eventName, params = {}) {
+    try {
+        if (typeof gtag === 'function') {
+            gtag('event', eventName, params);
+        }
+    } catch (e) {
+        console.warn('GA4 trackEvent error:', e);
+    }
 }
 
-// Radio El Brote - Standalone Version
+// ============================================
+// CONFIG & ESTADO
+// ============================================
 const CONFIG = {
     streamUrl: 'https://radios.solumedia.com:6260/stream',
     version: '2.0.0'
@@ -48,8 +53,10 @@ let visualizerCtx, dataArray, bufferLength;
 let startAngleVolume = 0;
 let currentRotationVolume = 0;
 
+// ============================================
+// INICIALIZACIÓN PRINCIPAL
+// ============================================
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('🎵 Radio El Brote v' + CONFIG.version);
 
     initializeElements();
     initializeTheme();
@@ -65,10 +72,10 @@ document.addEventListener('DOMContentLoaded', () => {
         elements.volumeBar.style.width = '83.33%';
     }, 100);
 
-    // Estadísticas de stream (requiere elements.audio listo)
+    // Estadísticas de stream
     streamStats.init();
 
-    // Sistema de reconexión automática (movido aquí para que elements.audio esté disponible)
+    // --- RECONEXIÓN AUTOMÁTICA ---
     if (elements.audio) {
         elements.audio.addEventListener('error', (e) => {
             console.error('⚠️ Error de audio:', e);
@@ -99,8 +106,13 @@ document.addEventListener('DOMContentLoaded', () => {
             STATE.reconnectAttempts = 0;
         });
     }
+
+    console.log('🎵 Radio El Brote v' + CONFIG.version + ' initialized!');
 });
 
+// ============================================
+// ELEMENTOS DOM
+// ============================================
 function initializeElements() {
     elements = {
         audio: document.getElementById('radio-stream'),
@@ -124,6 +136,9 @@ function initializeElements() {
     };
 }
 
+// ============================================
+// TEMA
+// ============================================
 function initializeTheme() {
     applyTheme(STATE.theme);
 
@@ -161,11 +176,14 @@ function toggleTheme() {
     applyTheme(newTheme);
 }
 
+// ============================================
+// AUDIO
+// ============================================
 function initializeAudio() {
+    // Solo configuramos el volumen inicial.
+    // El listener de error con reconexión está en DOMContentLoaded
+    // para evitar duplicados.
     elements.audio.volume = STATE.currentVolume;
-    elements.audio.addEventListener('error', (e) => {
-        console.error('Audio error:', e);
-    });
 }
 
 function setupAudioContext() {
@@ -203,6 +221,12 @@ async function startPlayback() {
         elements.visualizerDisplay.classList.add('active');
         elements.speakerMesh.classList.add('vibrating');
 
+        // GA4: registrar evento de reproducción
+        trackRadioEvent('radio_play', {
+            station: 'El Brote 90.3 FM',
+            stream_url: CONFIG.streamUrl
+        });
+
         updateMediaSession();
         addExtraParticles();
 
@@ -213,9 +237,19 @@ async function startPlayback() {
 }
 
 function stopPlayback() {
-    if (typeof trackRadioEvent === 'function') trackRadioEvent('stop', 'Radio Stopped');
+    // GA4: registrar evento de parada con tiempo escuchado
+    const listenSeconds = STATE.listenStart
+        ? Math.round((Date.now() - STATE.listenStart) / 1000)
+        : 0;
+
+    trackRadioEvent('radio_stop', {
+        station: 'El Brote 90.3 FM',
+        listen_duration_seconds: listenSeconds
+    });
+
     elements.audio.pause();
     STATE.isPlaying = false;
+    STATE.listenStart = null;
 
     elements.powerSwitch.classList.remove('active');
     elements.onLight.classList.remove('active');
@@ -225,6 +259,9 @@ function stopPlayback() {
     removeExtraParticles();
 }
 
+// ============================================
+// VISUALIZADOR
+// ============================================
 function initializeVisualizer() {
     visualizerCtx = elements.visualizerCanvas.getContext('2d');
     resizeCanvas(elements.visualizerCanvas);
@@ -364,6 +401,9 @@ function drawCircularVisualizer(ctx, canvas, data, length) {
     ctx.shadowBlur = 0;
 }
 
+// ============================================
+// PARTÍCULAS
+// ============================================
 function initializeParticles() {
     particlesCtx = elements.particlesCanvas.getContext('2d');
     resizeCanvas(elements.particlesCanvas);
@@ -425,6 +465,9 @@ function removeExtraParticles() {
     particles = particles.slice(0, 50);
 }
 
+// ============================================
+// CONTROLES
+// ============================================
 function initializeControls() {
     elements.powerSwitch.addEventListener('click', togglePlayback);
 
@@ -465,9 +508,10 @@ function dragVolume(e) {
 
     elements.volumeKnob.style.transform = `rotate(${currentRotationVolume}deg)`;
 
-    const volumePercent = ((currentRotationVolume + 135) / 270) * 120;
-    STATE.currentVolume = volumePercent / 100;
-    elements.audio.volume = Math.min(1, STATE.currentVolume);
+    // Clampear a 1 máximo
+    const volumePercent = ((currentRotationVolume + 135) / 270) * 100;
+    STATE.currentVolume = Math.min(1, volumePercent / 100);
+    elements.audio.volume = STATE.currentVolume;
 
     updateVolumeUI(STATE.currentVolume);
 
@@ -481,16 +525,13 @@ function stopDragVolume() {
 function updateVolumeUI(volume) {
     const volumePercent = volume * 100;
     elements.volumeBar.style.width = `${Math.min(100, volumePercent)}%`;
-
-    if (volumePercent > 100) {
-        elements.volumeBar.style.background = 'linear-gradient(90deg, #ff9800, #ff5722, #f44336)';
-        elements.volumeBar.style.boxShadow = '0 0 10px rgba(255, 87, 34, 0.8)';
-    } else {
-        elements.volumeBar.style.background = 'linear-gradient(90deg, #4caf50, #8bc34a, #cddc39, #ffc107)';
-        elements.volumeBar.style.boxShadow = '0 0 8px rgba(76, 175, 80, 0.8)';
-    }
+    elements.volumeBar.style.background = 'linear-gradient(90deg, #4caf50, #8bc34a, #cddc39, #ffc107)';
+    elements.volumeBar.style.boxShadow = '0 0 8px rgba(76, 175, 80, 0.8)';
 }
 
+// ============================================
+// MENÚ
+// ============================================
 function initializeMenu() {
     elements.menuBtn.addEventListener('click', () => {
         elements.menuOverlay.classList.remove('hidden');
@@ -517,6 +558,9 @@ function initializeMenu() {
     });
 }
 
+// ============================================
+// CONFIGURACIÓN
+// ============================================
 function initializeSettings() {
     if (elements.settingsBtn) {
         elements.settingsBtn.addEventListener('click', () => {
@@ -539,6 +583,11 @@ function initializeSettings() {
     }
 }
 
+// ============================================
+// MEDIA SESSION API
+// Permite controlar la radio desde la pantalla
+// de bloqueo y notificaciones de Android.
+// ============================================
 function initializeMediaSession() {
     if ('mediaSession' in navigator) {
         navigator.mediaSession.metadata = new MediaMetadata({
@@ -566,47 +615,9 @@ function updateMediaSession() {
     }
 }
 
-
 // ============================================
-// SERVICE WORKER (PWA)
+// MONITOR DE CONEXIÓN Y BUFFER ADAPTATIVO
 // ============================================
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
-            .then(registration => {
-                console.log('✅ Service Worker registrado:', registration.scope);
-            })
-            .catch(error => {
-                console.log('❌ Error al registrar Service Worker:', error);
-            });
-    });
-}
-
-// Detectar cuando la app está instalada
-window.addEventListener('appinstalled', () => {
-    console.log('🎉 App instalada exitosamente!');
-    // Opcional: enviar analytics
-});
-
-// Botón de instalación PWA
-let deferredPrompt;
-
-window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-
-    // Mostrar botón de instalación (opcional, podrías agregarlo al menú)
-    console.log('💡 La app puede ser instalada');
-
-    // Podrías agregar un botón en el menú para instalar:
-    // showInstallButton();
-});
-
-
-// ============================================
-// BUFFER ADAPTATIVO Y MONITOREO DE CONEXIÓN
-// ============================================
-
 const connectionMonitor = {
     indicator: null,
     dot: null,
@@ -625,18 +636,12 @@ const connectionMonitor = {
         this.statsText = document.getElementById('connection-stats');
         this.bufferFill = document.getElementById('buffer-fill');
 
-        // Configurar buffer adaptativo
         this.setupAdaptiveBuffer();
-
-        // Monitorear calidad de conexión
         this.startMonitoring();
-
-        // Ocultar indicador después de 5 segundos si todo está bien
         this.scheduleHide();
     },
 
     setupAdaptiveBuffer() {
-        // Detectar tipo de conexión
         if ('connection' in navigator) {
             const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
 
@@ -660,25 +665,19 @@ const connectionMonitor = {
                 this.updateQualityIndicator(effectiveType);
             };
 
-            // Actualizar al inicio
             updateBuffer();
-
-            // Actualizar cuando cambie la conexión
             connection.addEventListener('change', updateBuffer);
         } else {
-            // Si no soporta Network Information API, usar buffer completo
             elements.audio.preload = 'auto';
             console.log('📶 API de conexión no disponible: Buffer completo');
         }
     },
 
     startMonitoring() {
-        // Monitorear progreso del buffer
         elements.audio.addEventListener('progress', () => {
             this.updateBufferStats();
         });
 
-        // Monitorear eventos de audio
         elements.audio.addEventListener('waiting', () => {
             this.updateStatus('Buffering...', 'fair', '⏳ Cargando stream');
             this.show();
@@ -704,7 +703,6 @@ const connectionMonitor = {
             this.scheduleHide();
         });
 
-        // Actualizar buffer cada segundo cuando está reproduciendo
         setInterval(() => {
             if (STATE.isPlaying) {
                 this.updateBufferStats();
@@ -720,15 +718,12 @@ const connectionMonitor = {
                 const currentTime = elements.audio.currentTime;
                 this.bufferHealth = bufferedEnd - currentTime;
 
-                // Actualizar barra de buffer (0-10 segundos)
                 const bufferPercent = Math.min((this.bufferHealth / 10) * 100, 100);
                 this.bufferFill.style.width = bufferPercent + '%';
 
-                // Actualizar estadísticas
                 const stats = `Buffer: ${this.bufferHealth.toFixed(1)}s`;
                 this.statsText.textContent = stats;
 
-                // Actualizar calidad basada en buffer
                 if (this.bufferHealth > 5) {
                     this.dot.className = 'connection-dot excellent';
                 } else if (this.bufferHealth > 2) {
@@ -739,7 +734,6 @@ const connectionMonitor = {
                     this.dot.className = 'connection-dot poor';
                 }
 
-                // Mostrar si buffer es bajo
                 if (this.bufferHealth < 2 && STATE.isPlaying) {
                     this.show();
                     clearTimeout(this.hideTimeout);
@@ -810,18 +804,15 @@ const connectionMonitor = {
     }
 };
 
-// Inicializar monitor de conexión cuando cargue la página
 window.addEventListener('load', () => {
     setTimeout(() => {
         connectionMonitor.init();
     }, 1000);
 });
 
-
 // ============================================
 // ESTADÍSTICAS AVANZADAS DE STREAM
 // ============================================
-
 const streamStats = {
     startTime: null,
     totalPlayTime: 0,
@@ -830,12 +821,12 @@ const streamStats = {
     lastBufferUpdate: Date.now(),
 
     init() {
-        // Trackear tiempo de reproducción
         elements.audio.addEventListener('playing', () => {
             if (!this.startTime) this.startTime = Date.now();
+            // Guardar timestamp de inicio de escucha para GA4
+            if (!STATE.listenStart) STATE.listenStart = Date.now();
         });
 
-        // Trackear buffering
         elements.audio.addEventListener('waiting', () => {
             this.lastBufferUpdate = Date.now();
         });
@@ -848,7 +839,6 @@ const streamStats = {
             }
         });
 
-        // Mostrar estadísticas cada 30 segundos
         setInterval(() => {
             if (STATE.isPlaying) {
                 this.logStats();
@@ -869,156 +859,15 @@ const streamStats = {
         console.log(`📶 Calidad: ${connectionMonitor.quality}`);
         console.log(`💾 Buffer actual: ${connectionMonitor.bufferHealth.toFixed(2)}s`);
         console.log('═══════════════════════════════════════');
+
+        // GA4: reportar cada 30s de escucha activa
+        trackRadioEvent('radio_listening', {
+            station: 'El Brote 90.3 FM',
+            listen_seconds: Math.floor(totalTime),
+            buffer_quality: connectionMonitor.quality
+        });
     }
 };
-
-// streamStats.init() se llama dentro de DOMContentLoaded
-
-
-/*
-// ============================================
-// CHAT EN VIVO (PREPARADO PARA IMPLEMENTAR)
-// ============================================
-
-const chatSystem = {
-    container: null,
-    toggleBtn: null,
-    closeBtn: null,
-    messagesContainer: null,
-    input: null,
-    sendBtn: null,
-    badge: null,
-    unreadCount: 0,
-    isOpen: false,
-    
-    init() {
-        this.container = document.getElementById('chat-container');
-        this.toggleBtn = document.getElementById('chat-toggle');
-        this.closeBtn = document.getElementById('chat-close');
-        this.messagesContainer = document.getElementById('chat-messages');
-        this.input = document.getElementById('chat-input');
-        this.sendBtn = document.getElementById('chat-send');
-        this.badge = document.getElementById('chat-badge');
-        
-        // Event listeners
-        this.toggleBtn.addEventListener('click', () => this.toggle());
-        this.closeBtn.addEventListener('click', () => this.close());
-        
-        // Enter para enviar (cuando esté habilitado)
-        this.input.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && !this.input.disabled) {
-                this.sendMessage();
-            }
-        });
-        
-        this.sendBtn.addEventListener('click', () => {
-            if (!this.sendBtn.disabled) {
-                this.sendMessage();
-            }
-        });
-        
-        console.log('💬 Chat en vivo preparado (actualmente deshabilitado)');
-        
-        // NOTA: Para habilitar el chat, necesitás:
-        // 1. Un backend (Firebase, Socket.io, etc.)
-        // 2. Descomentar las funciones below
-        // 3. Remover los atributos "disabled" del input y botón
-    },
-    
-    toggle() {
-        if (this.isOpen) {
-            this.close();
-        } else {
-            this.open();
-        }
-    },
-    
-    open() {
-        this.isOpen = true;
-        this.container.classList.add('visible');
-        this.unreadCount = 0;
-        this.updateBadge();
-        this.input.focus();
-    },
-    
-    close() {
-        this.isOpen = false;
-        this.container.classList.remove('visible');
-    },
-    
-    sendMessage() {
-        const message = this.input.value.trim();
-        if (!message) return;
-        
-        // Agregar mensaje propio
-        this.addMessage(message, 'own', 'Vos');
-        this.input.value = '';
-        
-        // TODO: Enviar al servidor
-        // socket.emit('message', message);
-        
-        // Auto-scroll
-        this.scrollToBottom();
-    },
-    
-    addMessage(text, type, author) {
-        const messageDiv = document.createElement('div');
-        messageDiv.className = `chat-message ${type}`;
-        
-        const authorDiv = document.createElement('div');
-        authorDiv.className = 'chat-message-author';
-        authorDiv.textContent = author;
-        
-        const bubbleDiv = document.createElement('div');
-        bubbleDiv.className = 'chat-message-bubble';
-        bubbleDiv.textContent = text;
-        
-        messageDiv.appendChild(authorDiv);
-        messageDiv.appendChild(bubbleDiv);
-        this.messagesContainer.appendChild(messageDiv);
-        
-        // Actualizar badge si chat está cerrado
-        if (!this.isOpen && type === 'other') {
-            this.unreadCount++;
-            this.updateBadge();
-        }
-        
-        this.scrollToBottom();
-    },
-    
-    updateBadge() {
-        if (this.unreadCount > 0) {
-            this.badge.textContent = this.unreadCount;
-            this.badge.style.display = 'flex';
-        } else {
-            this.badge.style.display = 'none';
-        }
-    },
-    
-    scrollToBottom() {
-        this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight;
-    }
-    
-    // TODO: Implementar conexión con backend
-    // connectToServer() {
-    //     const socket = io('https://tu-servidor.com');
-    //     
-    //     socket.on('message', (data) => {
-    //         this.addMessage(data.text, 'other', data.author);
-    //     });
-    //     
-    //     socket.on('online-count', (count) => {
-    //         document.getElementById('chat-online-count').textContent = 
-    //             `${count} en línea`;
-    //     });
-    // }
-};
-
-// Inicializar chat
-chatSystem.init();
-*/
-
-console.log('🎵 Radio El Brote initialized successfully!');
 
 // ============================================
 // MINI JUEGO — Radio Runner
@@ -1050,13 +899,14 @@ document.addEventListener('DOMContentLoaded', function () {
             RadioRunner.init(gameCanvas);
             started = true;
         }
+        // GA4: registrar apertura del juego
+        trackRadioEvent('game_open', { game: 'Radio Runner' });
     }
 
     function closeGameFn() {
         gameModal.classList.remove('visible');
         document.body.style.overflow = '';
         RadioRunner.destroy();
-        // Resetear mute para la próxima vez
         if (RadioRunner.isMuted()) {
             RadioRunner.toggleMute();
             muteBtn.textContent = '🔊';
@@ -1067,7 +917,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (muteBtn) {
         muteBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); // no dispara jump
+            e.stopPropagation();
             RadioRunner.toggleMute();
             const muted = RadioRunner.isMuted();
             muteBtn.textContent = muted ? '🔇' : '🔊';

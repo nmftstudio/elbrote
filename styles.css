@@ -90,6 +90,13 @@ body {
     mix-blend-mode: overlay;
     transition: opacity 0.3s ease;
 }
+html, body {
+    /* Evita que el usuario pueda arrastrar la pantalla hacia abajo y ver fondo vacío */
+    overscroll-behavior-y: contain;
+    /* Evita que se seleccionen textos por error al tocar botones */
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
 
 header {
     position: absolute;
