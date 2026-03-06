@@ -678,6 +678,7 @@ header {
     width: 100%;
     background: linear-gradient(90deg, #d32f2f, #b71c1c, #d32f2f);
     padding: 15px 0;
+    padding-bottom: calc(15px + env(safe-area-inset-bottom));
     overflow: hidden;
     z-index: 15;
     box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5);
