@@ -26,6 +26,162 @@ function trackRadioEvent(eventName, params = {}) {
 }
 
 // ============================================
+// RADIO PLUGIN NATIVO + MUSIC CONTROLS
+// Arquitectura de dos capas para segundo plano:
+//
+//  1. RadioPlugin (Java Foreground Service):
+//     Mantiene el stream vivo aunque Android mate
+//     el WebView. Es el motor principal de audio.
+//
+//  2. MusicControls (plugin Capacitor):
+//     Muestra la notificación con controles en la
+//     barra de estado. Complemento visual del servicio.
+//
+//  En web (navegador): solo usa el <audio> del DOM.
+// ============================================
+let RadioPlugin   = null;
+let MusicControls = null;
+let musicControlsListener = null;
+
+async function initMusicControls() {
+    try {
+        const isNative = window.Capacitor && window.Capacitor.isNativePlatform();
+        const plugins  = window.Capacitor && window.Capacitor.Plugins;
+
+        if (isNative && plugins) {
+            // Plugin nativo propio (Foreground Service Java)
+            if (plugins.RadioPlugin) {
+                RadioPlugin = plugins.RadioPlugin;
+                console.log('📻 RadioPlugin nativo cargado.');
+            } else {
+                console.warn('⚠️ RadioPlugin no encontrado — asegurate de compilar la app.');
+            }
+
+            // Plugin MusicControls para la notificación visual
+            if (plugins.MusicControls) {
+                MusicControls = plugins.MusicControls;
+                console.log('🎵 MusicControls cargado.');
+            }
+        } else {
+            console.log('ℹ️ Corriendo en web: plugins nativos no activos.');
+        }
+    } catch (e) {
+        console.warn('⚠️ Error al inicializar plugins:', e);
+    }
+}
+
+async function activarNotificacionRadio() {
+    // 1. Iniciar el Foreground Service nativo (motor de audio en segundo plano)
+    if (RadioPlugin) {
+        try {
+            await RadioPlugin.play();
+            console.log('▶️ RadioPlugin.play() — Foreground Service iniciado.');
+        } catch (e) {
+            console.warn('⚠️ RadioPlugin.play() falló:', e);
+        }
+    }
+
+    // 2. Activar notificación visual (MusicControls)
+    if (!MusicControls) return;
+    try {
+        await MusicControls.create({
+            track:            'Radio El Brote 90.3 FM',
+            artist:           'En vivo · Villa Ciudad Parque',
+            cover:            'https://elbrote.org/wp-content/uploads/2025/08/radio-comunitaria-elbrote-3.png',
+            isPlaying:        true,
+            dismissable:      false,
+            hasPrev:          false,
+            hasNext:          false,
+            hasClose:         true,
+            playIcon:         'media_play',
+            pauseIcon:        'media_pause',
+            closeIcon:        'media_close',
+            notificationIcon: 'mr_ic_notification',
+            ticker:           'Escuchando Radio El Brote 90.3 FM'
+        });
+
+        musicControlsListener = await MusicControls.addListener(
+            'controlsNotification',
+            (info) => {
+                console.log('🔔 MusicControls evento:', info.message);
+                switch (info.message) {
+                    case 'music-controls-play':
+                        startPlayback();
+                        break;
+                    case 'music-controls-pause':
+                        stopPlayback();
+                        break;
+                    case 'music-controls-destroy':
+                    case 'music-controls-media-button':
+                        stopPlayback();
+                        break;
+                }
+            }
+        );
+
+        console.log('🔔 Notificación MusicControls activada.');
+    } catch (e) {
+        console.warn('⚠️ Error al activar MusicControls:', e);
+    }
+}
+
+async function actualizarEstadoNotificacion(isPlaying) {
+    if (MusicControls) {
+        try {
+            await MusicControls.updateIsPlaying({ isPlaying });
+        } catch (e) {
+            console.warn('⚠️ Error al actualizar estado MusicControls:', e);
+        }
+    }
+}
+
+async function desactivarNotificacionRadio() {
+    // 1. Detener el Foreground Service nativo
+    if (RadioPlugin) {
+        try {
+            await RadioPlugin.stop();
+            console.log('⏹️ RadioPlugin.stop() — Foreground Service detenido.');
+        } catch (e) {
+            console.warn('⚠️ RadioPlugin.stop() falló:', e);
+        }
+    }
+
+    // 2. Destruir la notificación visual
+    if (!MusicControls) return;
+    try {
+        if (musicControlsListener) {
+            musicControlsListener.remove();
+            musicControlsListener = null;
+        }
+        await MusicControls.destroy();
+        console.log('🔕 Notificación de radio desactivada.');
+    } catch (e) {
+        console.warn('⚠️ Error al destruir MusicControls:', e);
+    }
+}
+
+// ============================================
+// MANEJO DE VISIBILIDAD DE PÁGINA
+// Cuando el usuario vuelve a la app desde segundo
+// plano, verificamos si el audio WebView sigue vivo
+// y reconectamos si es necesario.
+// ============================================
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && STATE.isPlaying) {
+        // La app volvió al primer plano: verificar si el WebView audio sigue vivo
+        setTimeout(() => {
+            if (elements.audio && elements.audio.paused && STATE.isPlaying) {
+                console.log('🔄 WebView audio muerto al volver al frente — reconectando...');
+                elements.audio.load();
+                elements.audio.play().catch(e => {
+                    console.warn('⚠️ No se pudo reanudar el audio del WebView:', e);
+                });
+            }
+        }, 800);
+    }
+});
+
+// ============================================
 // CONFIG & ESTADO
 // ============================================
 const CONFIG = {
@@ -67,6 +223,9 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeMenu();
     initializeSettings();
     initializeMediaSession();
+
+    // Inicializar plugin de segundo plano
+    initMusicControls();
 
     setTimeout(() => {
         elements.volumeBar.style.width = '83.33%';
@@ -194,6 +353,10 @@ function setupAudioContext() {
         source.connect(STATE.analyser);
         STATE.analyser.connect(STATE.audioContext.destination);
         STATE.analyser.fftSize = 128;
+
+        // Exponer globalmente para que game.js pueda reutilizar
+        // el mismo AudioContext y evitar conflictos en Android WebView
+        window.__radioAudioContext = STATE.audioContext;
     }
 }
 
@@ -230,6 +393,9 @@ async function startPlayback() {
         updateMediaSession();
         addExtraParticles();
 
+        // Activar notificación de segundo plano
+        await activarNotificacionRadio();
+
     } catch (error) {
         console.error('Playback failed:', error);
         alert('No se pudo reproducir. Haz clic de nuevo para intentar.');
@@ -257,6 +423,9 @@ function stopPlayback() {
     elements.speakerMesh.classList.remove('vibrating');
 
     removeExtraParticles();
+
+    // Desactivar notificación de segundo plano
+    desactivarNotificacionRadio();
 }
 
 // ============================================
